@@ -1,7 +1,12 @@
 package util.ordering
 
 /**
+ * Maps a function on an object to provide an ordering. Useful for ordering objects based on a
+ * certain property.
  * 
+ * Usage:
+ *   val xs = Array("bob", "james", "jack", "ricardo")
+ *   scala.util.Sorting.quickSort(xs)(compareOn(_.length)) // bob, jack, james, ricardo 
  */
 object Ordering {
   /**
@@ -15,7 +20,8 @@ object Ordering {
   
   /**
    * Transformes a type, {@code A}, to a totally ordered type, {@code Ordered[A]}, given a 
-   * function from {@code A} to {@code B} where {@code B} is <i>bounded by an ordering on</i> {@code B}.
+   * function from {@code A} to {@code B} where {@code B} is <i>bounded by an ordering on</i>
+   * {@code B}.
    * 
    * @param f a function applied on {@code x} that transformes {@code x} to a totally ordered type {@code B}.
    */
