@@ -89,7 +89,7 @@ object Atkins {
       }
     }
     
-    for (n <- 2 to Math.sqrt(max1).toInt / 2 if (sieve(n)) {
+    for (n <- 2 to Math.sqrt(max1).toInt / 2 if (sieve(n))) {
       val p = n * 2 + 1
       primes += p
       
