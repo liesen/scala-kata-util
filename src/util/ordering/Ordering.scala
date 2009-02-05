@@ -5,8 +5,13 @@ package util.ordering
  * certain property.
  * 
  * Usage:
- *   val xs = Array("bob", "james", "jack", "ricardo")
- *   scala.util.Sorting.quickSort(xs)(compareOn(_.length)) // bob, jack, james, ricardo 
+ * 
+ *   val xs = Array("bob", "jack", "ricardo", "steve")
+ *   scala.util.Sorting.quickSort(xs)(compareOn(_.length)) // bob, jack, rufus, ricardo
+ * 
+ * Especially useful together with PriorityQueue:
+ * 
+ *   new scala.collection.mutable.PriorityQueue()(compareOn(_.someProperty))
  */
 object Ordering {
   /**

@@ -1,5 +1,8 @@
 package util
 
+/**
+ * A range of prime numbers (in order).
+ */
 sealed class PrimeRange(val primes: Array[Long]) extends RandomAccessSeqProxy[Long] {
   import java.util.Arrays.binarySearch
   import Lists.{ count, group }
@@ -41,13 +44,21 @@ sealed class PrimeRange(val primes: Array[Long]) extends RandomAccessSeqProxy[Lo
     xs
   }
   
+  /**
+   * Recursively finds the primes factors of /m/.
+   */
   def factorsR(m: Long): List[Long] = if (isPrime(m)) List(m) else 
     primes find { m % _ == 0 } match {
       case Some(f) => f :: factorsR(m / f)
       case None    => throw new IllegalStateException("No prime number that is a divisor found")
     }
   
-  
+  /**
+   * Returns the number of positive integers (less or equal to /n/) that are coprime to /n/. This
+   * is Euler's totient function. 
+   * 
+   * @see http://en.wikipedia.org/wiki/Euler%27s_totient_function
+   */
   def phi(n: Long): BigInt = n match {
     case 1               => BigInt(1)
     case m if isPrime(m) => BigInt(m - 1)
@@ -63,7 +74,7 @@ object Primes {
   import java.util.Scanner
   import java.io.{ File, Closeable }
   
-  val PRIMES_FILE: String = "primes/primes.txt"
+  val PRIMES_FILE: String = "/Users/liesen/workspace/Kata/primes/primes.txt"
   val NUM_PRIMES = 602489
     
   val elements = new Iterator[Long] with Closeable {

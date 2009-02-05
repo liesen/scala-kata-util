@@ -1,5 +1,9 @@
 package util
 
+
+/**
+ * Useful stuff for dealing with numbers (mostly integers).
+ */
 object Numbers {
   import java.lang.Character
   
@@ -43,12 +47,13 @@ object Numbers {
     if (n < 1000000000000000000L) 18 else 19
   }
   
-  def numDigits(m: BigInt): Int = if (m < Int.MaxValue) numDigits(m.intValue) else {
+  def numDigits(m: BigInt): Int = if (m < Long.MaxValue) numDigits(m.intValue) else {
     1 + numDigits(m / 10)
   }
   
   def stream(seed: Int, f: Int => Int): Stream[Int] = Stream.cons(seed, stream(f(seed), f))
   
+  /** /n/:th traingle number */
   def triangle(n: Int): Int = n * (n + 1) / 2
   
   def triangles(): Stream[Int] = Stream.from(0) map triangle
@@ -67,6 +72,7 @@ object Numbers {
   
   def isPerfect(num: Int): Boolean = (properDivisors(num) reduceLeft { _ + _ }) == num
   
+  /** Checks if the numbers 0, 1, ..., 9 are in /num/ */
   def isPandigital(num: Int): Boolean = digits(num).foldLeft(0){ _ | 1 << _ } == (1 << 10) - 2
   
   /** Iterative Euclidean algorithm for computing the greatest common divisor between two numbers */
