@@ -10,19 +10,33 @@ sealed class PrimeRange(val primes: Array[Long]) extends RandomAccessSeqProxy[Lo
   val self = primes
   
   // Minimus prime
-  val min = primes(0)
+  val min = primes.first
   
   // Maximus prime
-  val max = primes(primes.size - 1)
+  val max = primes.last
+  
+  private val sqrtMax = Math.sqrt(max).toLong 
+  
+  def indexOf(m: Long): Int = binarySearch(primes, m)
   
   def isPrime(m: Long): Boolean = {
     if (m < min)
-      return false
-    
-    if (m > max)
-      throw new IndexOutOfBoundsException(m + " is outside of the valid range [" + min + ", " + max + "]")
-  
-    binarySearch(primes, m) >= 0
+      false
+    else if (m <= max)
+      indexOf(primes, m) >= 0
+    else { // Try if any prime <= sqrt(m) divides m
+      val s = Math.sqrt(m).toLong
+      var i = 0
+      
+      while (primes(i) <= s) {
+        if (m % primes(i) == 0)
+          return false
+        
+        i += 1
+      }
+      
+      true
+    }
   }
   
   def factors(m: Long): List[Long] = {
@@ -31,14 +45,17 @@ sealed class PrimeRange(val primes: Array[Long]) extends RandomAccessSeqProxy[Lo
     var i = 0
     var p = primes(i)
     
-    while (n > 1) {
+    while (n > 1 && i < primes.size) {
       while (n % p == 0) {
         xs ::= p
         n /= p
       }
       
       i += 1
-      p = primes(i)
+      
+      if (i < primes.size) {
+        p = primes(i)
+      }
     }
     
     xs
@@ -67,6 +84,16 @@ sealed class PrimeRange(val primes: Array[Long]) extends RandomAccessSeqProxy[Lo
         case (p, k) => BigInt(p - 1) * BigInt(p).pow(k - 1)
       }
     } reduceLeft { (_: BigInt) * _ }
+  }
+  
+  /**
+   * The Prime-counting function
+   * 
+   * Returns the number of primes less than or equal to /n/.
+   */
+  def pi(n: Long): Int = if (n < min) 0 else binarySearch(primes, n) match {
+    case m if m < 0 => Math.abs(m) - 1
+    case m          => m + 1
   }
 }
 
@@ -97,5 +124,10 @@ object Primes {
     elements.readInto(ps)
     elements.close
     new PrimeRange(ps)
+  }
+  
+  def takeWhile(p: Long => Boolean): PrimeRange = {
+    val ps = new scala.collection.mutable.ArrayBuffer ++ (elements takeWhile p)
+    new PrimeRange(ps.toArray)
   }
 }
