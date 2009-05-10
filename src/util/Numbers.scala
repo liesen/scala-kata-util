@@ -9,6 +9,12 @@ object Numbers {
   
   def divMod(n: Long, d: Long): (Long, Long) = (n / d, n % d)
   
+  // BigInt quotient and remainder
+  def quotRem(number: BigInt, base: BigInt): (BigInt, BigInt) = 
+    number.bigInteger.divideAndRemainder(base.bigInteger) match {
+      case Array(div, rem) => (BigInt(div.toByteArray), BigInt(rem.toByteArray)) 
+    }
+  
   /**
    * Returns a list containing the digits of {@code n}.
    * @param n a number
