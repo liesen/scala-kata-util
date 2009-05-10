@@ -12,7 +12,7 @@ object Numbers {
   // BigInt quotient and remainder
   def quotRem(number: BigInt, base: BigInt): (BigInt, BigInt) = 
     number.bigInteger.divideAndRemainder(base.bigInteger) match {
-      case Array(div, rem) => (BigInt(div.toByteArray), BigInt(rem.toByteArray)) 
+      case Array(quotient, remainder) => (new BigInt(quotient), new BigInt(remainder)) 
     }
   
   /**
