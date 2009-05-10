@@ -53,7 +53,7 @@ object Numbers {
     if (n < 1000000000000000000L) 18 else 19
   }
   
-  def numDigits(m: BigInt): Int = if (m < Long.MaxValue) numDigits(m.intValue) else {
+  def numDigits(m: BigInt): Int = if (m < Long.MaxValue) numDigits(m.longValue) else {
     1 + numDigits(m / 10)
   }
   
