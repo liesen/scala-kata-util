@@ -20,6 +20,13 @@ object Lists {
   
   def product(xs: Iterable[Long]): BigInt = xs.foldLeft(BigInt(0)){ _ * _ }
   
+  def groupBy[A](p: A => A => Boolean)(xss: List[A]): List[List[A]] = xss match {
+    case Nil     => Nil
+    case x :: xs => xs span p(x) match {
+      case (ys, zs) => (x :: ys) :: groupBy(p)(zs)
+    }
+  }
+  
   def group[A](xss: List[A]): List[List[A]] = xss match {
     case Nil     => Nil
     case x :: xs => List(x :: xs takeWhile { _ == x }) ::: group(xs dropWhile { _ == x })
