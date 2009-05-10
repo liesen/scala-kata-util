@@ -20,4 +20,6 @@ object Streams {
     val nonEmpty = streams filter { !_.isEmpty }
     Stream(nonEmpty map { _.head }: _*) lazy_::: weave(nonEmpty map { _.tail }: _*)
   }
+  
+  def iterate[A](seed: A, step: A => A): Stream[A] = seed lazy_:: iterate(step(seed), step) 
 }
