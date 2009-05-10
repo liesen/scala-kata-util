@@ -5,7 +5,7 @@ object Exec {
   import java.util.concurrent._ // { FutureTask, Callable, TimeUnit, TimeoutException }
   
   // Creates an instance of Callable for a function.
-  private[this] implicit def toCallable[V](f: => V): Callable[V] = new Callable[V] {
+  implicit def toCallable[V](f: => V): Callable[V] = new Callable[V] {
     def call(): V = f
   }
   
