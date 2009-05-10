@@ -9,15 +9,25 @@ import java.lang.Number
  */
 case class Rational(var numerator: BigInt, var denominator: BigInt)
     extends Pair[BigInt, BigInt](numerator, denominator) with Ordered[Rational] {
+  import Rational._
+      
   def this(integer: BigInt) = this(integer, 1)
   
-  def simplify(): Rational = gcd(this)
+  def simplify(): Rational = 
+    if (denominator == 0)
+      if (numerator < 0) -INFINITY else INFINITY
+    else {
+      val d = numerator gcd denominator
+      Rational(numerator / d, denominator / d)
+    }
   
   def negate(): Rational = Rational(-numerator, denominator)
   
+  def unary_-(): Rational = negate
+  
   def doubleValue(): Double = numerator.doubleValue / denominator.doubleValue
   
-  def floatValue(): Float = (numerator / denominator).floatValue
+  def floatValue(): Float = numerator.floatValue / denominator.floatValue
   
   def longValue(): Long = (numerator / denominator).longValue
   
@@ -26,13 +36,24 @@ case class Rational(var numerator: BigInt, var denominator: BigInt)
   override def compare(that: Rational): Int =
     (numerator * that.denominator - denominator * that.numerator).intValue
   
-  override def equals(that: Any): Boolean = that.isInstanceOf[Rational] && compare(that.asInstanceOf[Rational]) == 0
+  override def equals(that: Any): Boolean = 
+    that.isInstanceOf[Rational] && compare(that.asInstanceOf[Rational]) == 0
   
-  def /(that: Rational): Rational = Rational(numerator * that.denominator, denominator * that.numerator)
+  def +(that: Rational): Rational = 
+    Rational(numerator * that.denominator + denominator * that.numerator,
+             denominator * that.denominator)
   
-  def *(that: Rational): Rational = Rational(numerator * that.numerator, denominator * that.denominator)
+  def -(that: Rational): Rational = 
+    Rational(numerator * that.denominator - that.numerator * denominator,
+             denominator * that.denominator)
   
-  def +(that: Rational): Rational = Rational(numerator * that.denominator + denominator * that.numerator, denominator * that.denominator)
+  def *(that: Rational): Rational =
+    Rational(numerator * that.numerator,
+             denominator * that.denominator)
+  
+  def /(that: Rational): Rational = 
+    Rational(numerator * that.denominator,
+             denominator * that.numerator)
   
   override def toString(): String = "(" + numerator + "%" + denominator + ")"
 }
@@ -44,14 +65,5 @@ object Rational {
   
   implicit def makeRational(numerator: BigInt) = new {
     def %/ (denominator: BigInt): Rational = Rational(numerator, denominator)
-  }
-}
-
-final object gcd extends PartialFunction[Rational, Rational] { 
-  def isDefinedAt(rational: Rational): Boolean = rational.denominator != 0
-  
-  def apply(rational: Rational): Rational = {
-    val d = rational.numerator gcd rational.denominator
-    Rational(rational.numerator / d, rational.denominator / d)
   }
 }
