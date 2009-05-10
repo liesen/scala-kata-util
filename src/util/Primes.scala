@@ -1,5 +1,7 @@
 package util
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
  * A range of prime numbers (in order).
  */
@@ -23,24 +25,13 @@ sealed class PrimeRange(val primes: Array[Long]) extends RandomAccessSeqProxy[Lo
     if (m < min)
       false
     else if (m <= max)
-      indexOf(primes, m) >= 0
-    else { // Try if any prime <= sqrt(m) divides m
-      val s = Math.sqrt(m).toLong
-      var i = 0
-      
-      while (primes(i) <= s) {
-        if (m % primes(i) == 0)
-          return false
-        
-        i += 1
-      }
-      
-      true
-    }
+      indexOf(m) >= 0
+    else // Try if any prime <= sqrt(m) divides m
+      (0 to Math.sqrt(m).toInt).exists { i => m % primes(i) == 0 }
   }
   
   def factors(m: Long): List[Long] = {
-    var xs = List[Long]()
+    var xs: List[Long] = Nil
     var n = m
     var i = 0
     var p = primes(i)
@@ -77,9 +68,9 @@ sealed class PrimeRange(val primes: Array[Long]) extends RandomAccessSeqProxy[Lo
    * @see http://en.wikipedia.org/wiki/Euler%27s_totient_function
    */
   def phi(n: Long): BigInt = n match {
-    case 1               => BigInt(1)
-    case m if isPrime(m) => BigInt(m - 1)
-    case m               => count(group(factors(n))) map { 
+    case 1 => BigInt(1)
+    case m if indexOf(m) >= 0 && isPrime(m) => BigInt(m - 1)
+    case m => count(group(factors(n))) map { 
       _ match {
         case (p, k) => BigInt(p - 1) * BigInt(p).pow(k - 1)
       }
@@ -117,8 +108,9 @@ object Primes {
   lazy val primes: PrimeRange = take(NUM_PRIMES)
   
   def take(numPrimes: Int): PrimeRange = {
-    if (numPrimes > NUM_PRIMES)
+    if (numPrimes > NUM_PRIMES) {
       throw new IllegalArgumentException("I only haz " + NUM_PRIMES + " primez")
+    }
     
     val ps = new Array[Long](numPrimes)
     elements.readInto(ps)
@@ -127,7 +119,7 @@ object Primes {
   }
   
   def takeWhile(p: Long => Boolean): PrimeRange = {
-    val ps = new scala.collection.mutable.ArrayBuffer ++ (elements takeWhile p)
+    val ps = new ArrayBuffer ++ (elements takeWhile p)
     new PrimeRange(ps.toArray)
   }
 }
