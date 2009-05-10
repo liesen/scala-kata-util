@@ -11,6 +11,8 @@ package util
  *     A. Zoghbi, I. Stojmenovic
  */
 object Partitions {
+  import scala.collection.mutable.{ Buffer, ListBuffer }
+  
   // the second parameter will be called for each integer partition
   def zs1(n: Int)(output: Array[Int] => Any) = {
     val x = Array.make(n + 1, 1)
