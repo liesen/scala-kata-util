@@ -59,7 +59,7 @@ object Exec {
   }
   
   // Formats a time span in /milliseconds/ as hh:mm:ss (ms)
-  private[this] def format(millis: Long): String = {
+  def format(millis: Long): String = {
     import java.lang.{ Integer, Long }
     
     val s = millis / 1000

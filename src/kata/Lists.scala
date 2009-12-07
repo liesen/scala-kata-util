@@ -3,22 +3,23 @@ package kata
 object Lists {
   import scala.collection.mutable.{ Buffer, ListBuffer }
   
-  def permutations[A](xss: List[A]): List[List[A]] = xss match {
-    case Nil => List(Nil)
-    case xs  => for ((y, ys) <- selections(xs); ps <- permutations(ys))
-      yield y :: ps
-  }
+  def permutations[A](xs: Iterable[A]): List[List[A]] =
+    if (xs.isEmpty) {
+      List(Nil)
+    } else {
+      for ((y, ys) <- selections(xs); ps <- permutations(ys)) yield y :: ps
+    }
 
-  def selections[A](xss: List[A]): List[(A, List[A])] = xss match {
+  def selections[A](xss: Iterable[A]): List[(A, List[A])] = xss match {
     case Nil => Nil
     case x :: xs => (x, xs) :: (for ((y, ys) <- selections(xs)) yield (y, x :: ys))
   }
   
-  def sum(xs: Iterable[Long]): BigInt = xs.foldLeft(BigInt(0)){ _ + _ }
+  def sum(xs: Iterable[Long]): BigInt = (BigInt(0) /: xs) { _ + _ }
   
-  def bigSum(xs: Iterable[BigInt]): BigInt = xs.foldLeft(BigInt(0)){ _ + _ }
+  def bigSum(xs: Iterable[BigInt]): BigInt = (BigInt(0) /: xs) { _ + _ }
   
-  def product(xs: Iterable[Long]): BigInt = xs.foldLeft(BigInt(0)){ _ * _ }
+  def product(xs: Iterable[Long]): BigInt = (BigInt(0) /: xs) { _ * _ }
   
   def groupBy[A](p: A => A => Boolean)(xss: List[A]): List[List[A]] = xss match {
     case Nil     => Nil
@@ -27,10 +28,7 @@ object Lists {
     }
   }
   
-  def group[A](xss: List[A]): List[List[A]] = xss match {
-    case Nil     => Nil
-    case x :: xs => List(x :: xs takeWhile { _ == x }) ::: group(xs dropWhile { _ == x })
-  }
+  def group[A]: List[A] => List[List[A]] = groupBy(x => x == _)
   
   def count[A](xss: Iterable[List[A]]): Iterable[(A, Int)] = for (x <- xss) yield (x.head, x.size)
   
@@ -38,7 +36,7 @@ object Lists {
   
   def surround[A](x: A)(xs: Buffer[A]): Buffer[A] = (xs + x).+:(x)
   
-  def palindromes[A](length: Int, alphabet: Set[A]): Iterator[Buffer[A]] = {    
+  def palindromes[A](length: Int, alphabet: Set[A]): Iterator[Buffer[A]] =    
     alphabet.elements flatMap { digit => 
       if (length > 2)
         palindromes(length - 2, alphabet) map surround(digit)
@@ -47,5 +45,4 @@ object Lists {
       else
         Iterator.single(new ListBuffer + digit)
     }
-  }
 }
